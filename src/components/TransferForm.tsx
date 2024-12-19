@@ -12,7 +12,7 @@ const TransferForm: React.FC<TransferFormProps> = ({ onSuccess }) => {
   const [amount, setAmount] = useState('');
 
   const handleTransfer = async () => {
-    const token = localStorage.getItem('token') || ''; // Retrieve token
+    const token = localStorage.getItem('token') || '';  
     const transferRequest: TransferRequest = {
       fromAccountId,
       toAccountId,

@@ -56,10 +56,10 @@ const TransactionHistory = () => {
 
         const currentDate = new Date();
         const startDate = new Date(currentDate);
-        startDate.setMonth(currentDate.getMonth() - 1); // 1 month before
+        startDate.setMonth(currentDate.getMonth() - 1); 
 
         const endDate = new Date(currentDate);
-        endDate.setMonth(currentDate.getMonth() + 1); // 1 month after
+        endDate.setMonth(currentDate.getMonth() + 1); 
 
         setFilters(prevFilters => ({
           ...prevFilters,

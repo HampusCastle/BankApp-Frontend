@@ -19,7 +19,7 @@ const AccountDashboard = () => {
   const [transactionHistory, setTransactionHistory] = useState<TransactionDetailsResponse[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [amount, setAmount] = useState<string>('');
-  const [toAccountId, setToAccountId] = useState<string>(''); // Added for transfer logic
+  const [toAccountId, setToAccountId] = useState<string>('');
   const [filters, setFilters] = useState({
     fromDate: '',
     toDate: '',

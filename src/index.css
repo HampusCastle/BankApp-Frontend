@@ -1,9 +1,7 @@
-/* Tailwind Directives */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Global Styles */
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
@@ -38,7 +36,6 @@ img {
   height: auto;
 }
 
-/* Transaction History Styles */
 .transaction-history-container {
   padding: 16px;
   max-width: 100%;
@@ -112,7 +109,6 @@ strong {
   margin: 0;
 }
 
-/* Add responsiveness for transaction history */
 @media (min-width: 768px) {
   .transaction-history-container {
     max-width: 800px;
@@ -135,7 +131,6 @@ strong {
     width: 100%;
   }
 
-  /* Transaction list items */
   .transaction-item {
     flex-direction: row;
     justify-content: space-between;
@@ -147,13 +142,12 @@ strong {
   }
 }
 
-/* Styles for smaller screens (mobile-first) */
 @media (max-width: 640px) {
   .filter-form {
     flex-direction: column;
     gap: 10px;
   }
-  
+
   .transaction-item {
     flex-direction: column;
     gap: 10px;
