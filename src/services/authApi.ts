@@ -1,4 +1,4 @@
-import axiosInstance from './axiosInstance';
+import axiosInstance from '../utils/axiosInstance';
 
 interface LoginRequest {
   username: string;

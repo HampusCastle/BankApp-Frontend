@@ -1,19 +1,21 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import axiosInstance from './axiosInstance';
+import axiosInstance from '../utils/axiosInstance';
 
 export interface CreateRecurringPaymentRequest {
   amount: number;
   fromAccountId: string;
   toAccountId: string;
   interval: string;
-  token: string;
 }
 
 export interface RecurringPaymentResponse {
   id: string;
+  userId: string;
   amount: number;
   fromAccountId: string;
   toAccountId: string;
+  interval: string;
   status: string;
   nextPaymentDate: string;
 }
@@ -21,11 +23,8 @@ export interface RecurringPaymentResponse {
 export const createRecurringPayment = async (
   data: CreateRecurringPaymentRequest
 ): Promise<RecurringPaymentResponse> => {
-  const token = localStorage.getItem('token');
   try {
-    const response = await axiosInstance.post<RecurringPaymentResponse>('/recurring-payments', data, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await axiosInstance.post<RecurringPaymentResponse>('/recurring-payments', data);
     return response.data;
   } catch (err) {
     throw new Error("Failed to create recurring payment");
@@ -33,15 +32,30 @@ export const createRecurringPayment = async (
 };
 
 export const getRecurringPayments = async (userId: string): Promise<RecurringPaymentResponse[]> => {
-  const token = localStorage.getItem('token');
   try {
-    const response = await axiosInstance.get<RecurringPaymentResponse[]>(`/recurring-payments/${userId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    console.log(`Fetching recurring payments for URL: /recurring-payments/${userId}`);
+    const response = await axiosInstance.get<RecurringPaymentResponse[]>(`/recurring-payments/${userId}`);
     return response.data;
   } catch (err) {
-    console.error("Error fetching recurring payments:", err);
-    throw err;
+    throw new Error("Failed to fetch recurring payments");
+  }
+};
+
+export const deleteRecurringPayment = async (id: string) => {
+  try {
+    await axiosInstance.delete(`/recurring-payments/${id}`);
+  } catch (err) {
+    throw new Error("Failed to delete recurring payment");
+  }
+};
+
+export const updateRecurringPayment = async (
+  id: string,
+  data: any
+): Promise<RecurringPaymentResponse> => {
+  try {
+    const response = await axiosInstance.put<RecurringPaymentResponse>(`/recurring-payments/${id}`, data);
+    return response.data;
+  } catch (err) {
+    throw new Error("Failed to update recurring payment");
   }
 };

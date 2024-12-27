@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import axiosInstance from './axiosInstance';
+import axiosInstance from '../utils/axiosInstance';
 
 export interface TransactionHistoryRequest {
   accountId: string;
@@ -19,14 +19,10 @@ export interface TransactionDetailsResponse {
 }
 
 export const getTransactionHistory = async (
-  token: string,
   filters: TransactionHistoryRequest
 ): Promise<TransactionDetailsResponse[]> => {
   try {
     const response = await axiosInstance.get<TransactionDetailsResponse[]>('/transactions/history', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
       params: filters,
     });
     return response.data;

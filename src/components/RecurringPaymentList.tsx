@@ -1,53 +1,26 @@
-import React, { useState, useEffect } from "react";
-import { getRecurringPayments } from "../services/recurringPaymentApi";
-
-interface RecurringPaymentResponse {
-  id: string;
-  amount: number;
-  fromAccountId: string;
-  toAccountId: string;
-  status: string;
-  nextPaymentDate: string;
-}
+import { RecurringPaymentResponse, deleteRecurringPayment } from '../services/recurringPaymentApi';
+import BackButton from './BackButton';
 
 interface RecurringPaymentListProps {
-  userId: string;
-  payments: RecurringPaymentResponse[]; 
+  payments: RecurringPaymentResponse[];
+  onDelete: (id: string) => void;
+  onEdit: (payment: RecurringPaymentResponse) => void;
 }
 
-const RecurringPaymentList: React.FC<RecurringPaymentListProps> = ({ userId, payments }) => {
-  const [error, setError] = useState<string>("");
-
-  useEffect(() => {
-    const fetchPayments = async () => {
-      console.log("Fetching payments for userId:", userId); 
-      try {
-        if (!payments) {
-          const data = await getRecurringPayments(userId); 
-          console.log("Recurring payments response:", data);
-          if (Array.isArray(data)) {
-            if (data.length === 0) {
-              setError(""); 
-            } else {
-              setError(""); 
-            }
-          } else {
-            setError("Invalid response from server.");
-          }
-        }
-      } catch (err) {
-        console.error("Error fetching recurring payments:", err);
-        setError("Failed to fetch recurring payments.");
-      }
-    };
-
-    fetchPayments();
-  }, [userId, payments]);
+const RecurringPaymentList = ({ payments, onDelete, onEdit }: RecurringPaymentListProps) => {
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteRecurringPayment(id);
+      onDelete(id);
+    } catch (err) {
+      console.error('Error deleting recurring payment:', err);
+    }
+  };
 
   return (
     <div>
+      <BackButton />
       <h2 className="text-xl text-purple-400 mb-4">Recurring Payments</h2>
-      {error && <p className="text-red-500">{error}</p>}
       {payments.length > 0 ? (
         <ul>
           {payments.map((payment) => (
@@ -57,11 +30,25 @@ const RecurringPaymentList: React.FC<RecurringPaymentListProps> = ({ userId, pay
               <p><strong>To Account:</strong> {payment.toAccountId}</p>
               <p><strong>Status:</strong> {payment.status}</p>
               <p><strong>Next Payment Date:</strong> {new Date(payment.nextPaymentDate).toLocaleDateString()}</p>
+              <div className="flex gap-4">
+                <button
+                  onClick={() => onEdit(payment)}
+                  className="text-blue-500 hover:text-blue-400"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(payment.id)}
+                  className="text-red-500 hover:text-red-400"
+                >
+                  Delete
+                </button>
+              </div>
             </li>
           ))}
         </ul>
       ) : (
-        !error && <p className="text-gray-400">No recurring payments available.</p>
+        <p className="text-gray-400">No recurring payments available.</p>
       )}
     </div>
   );

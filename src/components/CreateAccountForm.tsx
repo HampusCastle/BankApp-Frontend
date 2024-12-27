@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useState } from 'react';
-import { createAccount, CreateAccountRequest } from '../services/accountApi'
+import { useState } from "react";
+import { createAccount, CreateAccountRequest } from "../services/accountApi";
+import BackButton from "./BackButton";
 
 interface Props {
   onSuccess: () => void;
@@ -8,8 +8,8 @@ interface Props {
 
 const CreateAccountForm = ({ onSuccess }: Props) => {
   const [formData, setFormData] = useState<CreateAccountRequest>({
-    name: '',
-    accountType: '',
+    name: "",
+    accountType: "",
     balance: 0,
   });
   const [error, setError] = useState<string | null>(null);
@@ -24,13 +24,14 @@ const CreateAccountForm = ({ onSuccess }: Props) => {
     try {
       await createAccount(formData);
       onSuccess();
-    } catch (err) {
-      setError('Failed to create account.');
+    } catch {
+      setError("Failed to create account.");
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="p-4 bg-gray-800 rounded-lg">
+      <BackButton />
       <h2 className="text-xl text-purple-400 mb-4">Create New Account</h2>
       {error && <p className="text-red-500">{error}</p>}
       <div className="mb-4">

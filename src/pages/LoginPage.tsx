@@ -1,12 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { loginUser } from '../services/authApi'
+import { useNavigate } from 'react-router-dom';
+import { loginUser } from '../services/authApi';
+import Modal from '../components/Modal';
+import RegisterForm from '../components/RegisterForm';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState(false);
+  const [isRegisterOpen, setIsRegisterOpen] = useState(false); 
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,9 +24,11 @@ const LoginPage = () => {
 
     try {
       const { token } = await loginUser(formData);
-      localStorage.setItem('token', token);
-      navigate('/home');
+      console.log("Token received from login:", token);
+      localStorage.setItem('jwtToken', token);
+      navigate('/dashboard');
     } catch (err: any) {
+      console.error("Login error:", err);
       setError(err.response?.data?.message || 'Invalid username or password');
     } finally {
       setLoading(false);
@@ -32,11 +37,9 @@ const LoginPage = () => {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-900 to-gray-800 overflow-hidden">
-      {/* Background Shapes */}
       <div className="absolute top-10 left-0 w-80 h-80 bg-purple-500 rounded-full opacity-30 blur-3xl"></div>
       <div className="absolute bottom-20 right-0 w-72 h-72 bg-purple-700 rounded-full opacity-40 blur-2xl"></div>
 
-      {/* Form Card */}
       <div className="relative z-10 bg-gray-900 p-6 md:p-8 rounded-lg shadow-2xl w-full max-w-xs sm:max-w-sm md:max-w-md">
         <h2 className="text-2xl md:text-3xl font-bold text-purple-400 text-center mb-6">Sign In</h2>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
@@ -75,11 +78,20 @@ const LoginPage = () => {
         </form>
         <div className="text-center mt-4">
           <p className="text-gray-500 text-sm">Don't have an account?</p>
-          <Link to="/register" className="text-purple-400 hover:underline text-sm">
+          <button
+            onClick={() => setIsRegisterOpen(true)} 
+            className="text-purple-400 hover:underline text-sm"
+          >
             Register Here
-          </Link>
+          </button>
         </div>
       </div>
+
+      {isRegisterOpen && (
+        <Modal isOpen={isRegisterOpen} onClose={() => setIsRegisterOpen(false)}>
+          <RegisterForm onClose={() => setIsRegisterOpen(false)} />
+        </Modal>
+      )}
     </div>
   );
 };

@@ -1,45 +1,49 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useState } from 'react';
-import { transferFunds, TransferRequest } from '../services/transferApi';
+import { useState } from "react";
+import { transferFunds, TransferRequest } from "../services/transferApi";
 
 interface TransferFormProps {
-  onSuccess: () => void;
+  fromAccountId: string;
+  onSuccess: () => void; 
 }
 
-const TransferForm: React.FC<TransferFormProps> = ({ onSuccess }) => {
-  const [fromAccountId, setFromAccountId] = useState('');
-  const [toAccountId, setToAccountId] = useState('');
-  const [amount, setAmount] = useState('');
+const TransferForm = ({ fromAccountId, onSuccess }: TransferFormProps) => {
+  const [toAccountId, setToAccountId] = useState<string>('');
+  const [amount, setAmount] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const isValidForm = (): boolean => {
+    return fromAccountId.trim() !== "" && toAccountId.trim() !== "" && Number(amount) > 0;
+  };
 
   const handleTransfer = async () => {
-    const token = localStorage.getItem('token') || '';  
+    if (!isValidForm()) {
+      alert("Please fill in all fields correctly.");
+      return;
+    }
+
     const transferRequest: TransferRequest = {
       fromAccountId,
       toAccountId,
       amount: Number(amount),
     };
+
+    setIsLoading(true);
     try {
-      await transferFunds(transferRequest, token);
-      alert('Transfer successful');
-      onSuccess();
-      setFromAccountId('');
-      setToAccountId('');
-      setAmount('');
+      await transferFunds(transferRequest);
+      alert("Transfer successful!");
+      onSuccess(); 
+      setToAccountId("");
+      setAmount("");
     } catch (error) {
-      alert('Transfer failed. Please try again.');
+      alert("Transfer failed. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
-
   return (
     <div className="p-4 bg-gray-700 rounded">
       <h3 className="text-lg font-bold text-white mb-4">Send Transfer</h3>
-      <input
-        type="text"
-        placeholder="From Account ID"
-        value={fromAccountId}
-        onChange={(e) => setFromAccountId(e.target.value)}
-        className="w-full p-2 mb-2 rounded bg-gray-800 text-white"
-      />
       <input
         type="text"
         placeholder="To Account ID"
@@ -56,9 +60,12 @@ const TransferForm: React.FC<TransferFormProps> = ({ onSuccess }) => {
       />
       <button
         onClick={handleTransfer}
-        className="w-full p-2 bg-blue-600 text-white rounded hover:bg-blue-500 transition"
+        className={`w-full p-2 rounded ${
+          isLoading ? "bg-gray-500" : "bg-blue-600 hover:bg-blue-500 transition"
+        }`}
+        disabled={isLoading}
       >
-        Send
+        {isLoading ? "Processing..." : "Send"}
       </button>
     </div>
   );

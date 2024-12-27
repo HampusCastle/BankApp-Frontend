@@ -1,37 +1,29 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// src/services/transferService.ts
-import axios from 'axios';
+import axiosInstance from "../utils/axiosInstance";
 
 export interface TransferRequest {
-    fromAccountId: string;
-    toAccountId: string;
-    amount: number;
-    categoryId?: string; 
+  fromAccountId: string;
+  toAccountId: string;
+  amount: number;
+  categoryId?: string;
 }
 
 export interface TransferResponse {
-    message: string;
-    status: string;
-    transactionId?: string;
+  message: string;
+  status: string;
+  transactionId?: string;
 }
 
-const API_BASE_URL = 'http://localhost:8080'; 
+const logError = (error: any) => {
+  console.error("Error transferring funds:", error.response?.data || error.message);
+};
 
-export const transferFunds = async (transferData: TransferRequest, token: string): Promise<TransferResponse> => {
-    try {
-        const response = await axios.post<TransferResponse>(
-            `${API_BASE_URL}/transfers`,
-            transferData,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            }
-        );
-        return response.data;
-    } catch (error: any) {
-        console.error('Error transferring funds:', error.response?.data || error.message);
-        throw error;
-    }
+export const transferFunds = async (transferData: TransferRequest): Promise<TransferResponse> => {
+  try {
+    const response = await axiosInstance.post<TransferResponse>("/transfers", transferData);
+    return response.data;
+  } catch (error: any) {
+    logError(error);
+    throw error;
+  }
 };
