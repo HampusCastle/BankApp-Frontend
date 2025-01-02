@@ -1,4 +1,4 @@
-import axiosInstance from '../utils/axiosInstance';
+import axiosInstance from "../utils/axiosInstance";
 
 export interface CreateScheduledPaymentRequest {
   id?: string;
@@ -10,15 +10,24 @@ export interface CreateScheduledPaymentRequest {
 }
 
 export interface ScheduledPaymentResponse {
-  message: string;
+  id: string;
   paymentId?: string;
-  amount?: number;
+  fromAccountId: string;
+  toAccountId: string;
+  amount: number;
+  schedule: string;
+  nextPaymentDate: number;
 }
+
+export const getScheduledPayments = async (): Promise<ScheduledPaymentResponse[]> => {
+  const response = await axiosInstance.get<ScheduledPaymentResponse[]>("/scheduled-payments");
+  return response.data;
+};
 
 export const createScheduledPayment = async (
   data: CreateScheduledPaymentRequest
 ): Promise<ScheduledPaymentResponse> => {
-  const response = await axiosInstance.post('/scheduled-payments', data);
+  const response = await axiosInstance.post("/scheduled-payments", data);
   return response.data;
 };
 
@@ -30,9 +39,7 @@ export const updateScheduledPayment = async (
   return response.data;
 };
 
-export const deleteScheduledPayment = async (
-  id: string
-): Promise<ScheduledPaymentResponse> => {
+export const deleteScheduledPayment = async (id: string): Promise<ScheduledPaymentResponse> => {
   const response = await axiosInstance.delete(`/scheduled-payments/${id}`);
   return response.data;
 };

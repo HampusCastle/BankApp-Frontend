@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import NotificationBell from "./NotificationBell";
 import {
   FaMoneyCheckAlt,
@@ -6,13 +6,34 @@ import {
   FaPiggyBank,
   FaCalendarAlt,
   FaCogs,
+  FaTachometerAlt,
+  FaSignOutAlt,
+  FaRedoAlt, 
 } from "react-icons/fa";
+import { useEffect } from "react";
+import { isAuthenticated, clearJwtToken } from "../utils/jwtUtil";
 
 const Layout = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (
+      !isAuthenticated() &&
+      location.pathname !== "/login" &&
+      location.pathname !== "/register"
+    ) {
+      navigate("/home");
+    }
+  }, [navigate, location.pathname]);
 
   const handleNavigate = (path: string) => {
     navigate(path);
+  };
+
+  const handleLogout = () => {
+    clearJwtToken();
+    navigate("/home");
   };
 
   return (
@@ -24,6 +45,13 @@ const Layout = () => {
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 bg-gray-800 p-4 flex justify-between text-white z-50">
+        <div
+          onClick={() => handleNavigate("/dashboard")}
+          className="flex flex-col items-center cursor-pointer hover:bg-gray-700 p-2 rounded"
+        >
+          <FaTachometerAlt size={24} />
+          <p className="text-sm">Dashboard</p>
+        </div>
         <div
           onClick={() => handleNavigate("/accounts")}
           className="flex flex-col items-center cursor-pointer hover:bg-gray-700 p-2 rounded"
@@ -37,6 +65,13 @@ const Layout = () => {
         >
           <FaExchangeAlt size={24} />
           <p className="text-sm">Subscriptions</p>
+        </div>
+        <div
+          onClick={() => handleNavigate("/recurring-payments")}
+          className="flex flex-col items-center cursor-pointer hover:bg-gray-700 p-2 rounded"
+        >
+          <FaRedoAlt size={24} />
+          <p className="text-sm">Recurring</p>
         </div>
         <div
           onClick={() => handleNavigate("/savings-goals")}
@@ -58,6 +93,13 @@ const Layout = () => {
         >
           <FaCogs size={24} />
           <p className="text-sm">Profile</p>
+        </div>
+        <div
+          onClick={handleLogout}
+          className="flex flex-col items-center cursor-pointer hover:bg-red-700 p-2 rounded"
+        >
+          <FaSignOutAlt size={24} />
+          <p className="text-sm">Logout</p>
         </div>
       </div>
     </div>

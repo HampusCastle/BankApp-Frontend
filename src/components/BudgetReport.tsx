@@ -21,7 +21,7 @@ interface ExpensesSummary {
 
 interface BudgetReportProps {
   userId: string;
-  accountId: string;
+  accountId?: string;
 }
 
 const categoryLabels: { [key: string]: string } = {
@@ -30,6 +30,7 @@ const categoryLabels: { [key: string]: string } = {
   SENT: "Sent",
   RECEIVED: "Received",
   TRANSFER: "Transfer",
+  SCHEDULED_PAYMENT: "Scheduled payment",
   SUBSCRIPTIONS: "Subscriptions",
   RECURRING_PAYMENT: "Recurring Payments",
   SAVINGS_GOAL: "Savings Goal",
@@ -49,8 +50,12 @@ const BudgetReport = ({ userId }: BudgetReportProps) => {
       try {
         const data = await getMonthlyExpensesForAllAccounts(userId);
         setExpenses(data);
-      } catch {
-        setError("Failed to load expenses");
+      } catch (error: any) {
+        if (error.response?.status === 404) {
+          setError("No expenses/transactions found.");
+        } else {
+          setError("Failed to load expenses.");
+        }
       } finally {
         setLoading(false);
       }
@@ -78,8 +83,22 @@ const BudgetReport = ({ userId }: BudgetReportProps) => {
         datasets: [
           {
             data: Object.values(categories),
-            backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#FF9F40", "#9966FF"],
-            hoverBackgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#FF9F40", "#9966FF"],
+            backgroundColor: [
+              "#FF6384",
+              "#36A2EB",
+              "#FFCE56",
+              "#4BC0C0",
+              "#FF9F40",
+              "#9966FF",
+            ],
+            hoverBackgroundColor: [
+              "#FF6384",
+              "#36A2EB",
+              "#FFCE56",
+              "#4BC0C0",
+              "#FF9F40",
+              "#9966FF",
+            ],
           },
         ],
       }
@@ -104,13 +123,13 @@ const BudgetReport = ({ userId }: BudgetReportProps) => {
     <div className="p-6 bg-gray-800 text-white rounded">
       {expenses ? (
         <>
-          <h2 className="text-xl font-semibold">Total Expenses: ${expenses.totalExpenses}</h2>
+          <h2 className="text-xl font-semibold">Total Expenses: ${totalExpenses}</h2>
           <div className="mt-6">
             <Pie data={chartData} options={options} />
           </div>
         </>
       ) : (
-        <p>No expenses data available</p>
+        <p>No expenses data available.</p>
       )}
     </div>
   );

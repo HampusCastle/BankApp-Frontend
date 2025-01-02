@@ -11,7 +11,7 @@ const RecurringPaymentList = ({ payments, onDelete, onEdit }: RecurringPaymentLi
   const handleDelete = async (id: string) => {
     try {
       await deleteRecurringPayment(id);
-      onDelete(id);
+      onDelete(id); 
     } catch (err) {
       console.error('Error deleting recurring payment:', err);
     }

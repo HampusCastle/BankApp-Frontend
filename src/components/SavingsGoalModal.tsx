@@ -1,17 +1,10 @@
 import { useState, useEffect } from "react";
-
-interface SavingsGoal {
-  id: string;
-  name: string;
-  targetAmount: number;
-  targetDate: string;
-  currentAmount: number; 
-}
+import { SavingsGoal } from "../types/SavingsGoal";
 
 interface SavingsGoalModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (goal: SavingsGoal) => void;
+  onSubmit: (goal: SavingsGoal) => Promise<void>;
   initialData: SavingsGoal;
   isEditing: boolean;
 }
@@ -31,20 +24,13 @@ const SavingsGoalModal = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const updatedValue = name === 'targetAmount' ? parseFloat(value) : value;
+    const updatedValue = name === "targetAmount" ? parseFloat(value) : value;
     setFormData((prevData) => ({ ...prevData, [name]: updatedValue }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    const goalData = { 
-      ...formData,
-      targetAmount: parseFloat(formData.targetAmount.toString()),
-      id: formData.id || ''  
-    };
-
-    onSubmit(goalData);
+    onSubmit(formData);
     onClose();
   };
 

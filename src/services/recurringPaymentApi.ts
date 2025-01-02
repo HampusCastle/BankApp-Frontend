@@ -31,11 +31,12 @@ export const createRecurringPayment = async (
   }
 };
 
-export const getRecurringPayments = async (userId: string): Promise<RecurringPaymentResponse[]> => {
+export const getRecurringPayments = async (): Promise<RecurringPaymentResponse[]> => {
   try {
-    const response = await axiosInstance.get<RecurringPaymentResponse[]>(`/recurring-payments/${userId}`);
+    const response = await axiosInstance.get<RecurringPaymentResponse[]>(`/recurring-payments`);
     return response.data;
   } catch (err) {
+    console.error("Failed to fetch recurring payments:", err);
     throw new Error("Failed to fetch recurring payments");
   }
 };

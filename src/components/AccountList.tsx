@@ -2,17 +2,26 @@ import { AccountDetailsResponse } from "../services/accountApi";
 import BackButton from "./BackButton";
 
 interface AccountListProps {
-  accounts: AccountDetailsResponse[];
+  accounts: Array<AccountDetailsResponse & { isSavingsGoal?: boolean }>;
   onAccountClick: (accountId: string) => void;
 }
 
-const AccountList = ({ accounts, onAccountClick }: AccountListProps) => {
+const AccountList = ({ accounts = [], onAccountClick }: AccountListProps) => {
+  if (!Array.isArray(accounts) || accounts.length === 0) {
+    return (
+      <div>
+        <BackButton />
+        <p className="text-gray-400">No accounts available.</p>
+      </div>
+    );
+  }
+
   return (
     <div>
       <BackButton />
       {accounts.map((account) => (
         <div
-          key={account.id}
+          key={`${account.isSavingsGoal ? "savings-" : "account-"}${account.id}`}
           className="p-4 bg-gray-700 rounded-lg mb-4 cursor-pointer hover:bg-gray-600"
           onClick={() => onAccountClick(account.id)}
         >

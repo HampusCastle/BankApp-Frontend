@@ -1,18 +1,18 @@
 import { useState, useEffect } from "react";
 import { addFundsToAccount, withdrawFundsFromAccount } from "../services/accountApi";
+import { TransactionDetailsResponse, getTransactionHistory } from "../services/transactionApi";
 import { transferFunds } from "../services/transferApi";
-import { getTransactionHistory } from "../services/transactionApi";
-import TransactionHistory from "./TransactionHistory";
-import { TransactionDetailsResponse } from "../services/transactionApi";
 import BackButton from "./BackButton";
+import TransactionHistory from "./TransactionHistory";
 
 interface AccountDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   accountId: string;
+  onTransactionSuccess: () => void;
 }
 
-const AccountDetailsModal = ({ isOpen, onClose, accountId }: AccountDetailsModalProps) => {
+const AccountDetailsModal = ({ isOpen, onClose, accountId, onTransactionSuccess }: AccountDetailsModalProps) => {
   const [fundsAmount, setFundsAmount] = useState<number>(0);
   const [transferAmount, setTransferAmount] = useState<number>(0);
   const [transferAccountId, setTransferAccountId] = useState<string>('');
@@ -38,6 +38,7 @@ const AccountDetailsModal = ({ isOpen, onClose, accountId }: AccountDetailsModal
     if (fundsAmount <= 0) return;
     try {
       await addFundsToAccount(accountId, { amount: fundsAmount });
+      onTransactionSuccess();
       onClose();
     } catch {
       console.error("Failed to add funds");
@@ -48,6 +49,7 @@ const AccountDetailsModal = ({ isOpen, onClose, accountId }: AccountDetailsModal
     if (fundsAmount <= 0) return;
     try {
       await withdrawFundsFromAccount(accountId, { amount: fundsAmount });
+      onTransactionSuccess();
       onClose();
     } catch {
       console.error("Failed to withdraw funds");
@@ -58,6 +60,7 @@ const AccountDetailsModal = ({ isOpen, onClose, accountId }: AccountDetailsModal
     if (transferAmount <= 0 || !transferAccountId) return;
     try {
       await transferFunds({ fromAccountId: accountId, toAccountId: transferAccountId, amount: transferAmount });
+      onTransactionSuccess();
       onClose();
     } catch {
       console.error("Failed to transfer funds");

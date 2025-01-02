@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
-import { getAllAccounts } from "../services/accountApi";
 import TransferForm from "../components/TransferForm";
 
 const TransferPage = () => {
   const [fromAccountId, setFromAccountId] = useState("");
-  const [error, setError] = useState("");
+  const [error, ] = useState("");
 
   useEffect(() => {
     const storedAccountId = localStorage.getItem("accountId");

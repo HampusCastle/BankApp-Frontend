@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { getSavingsGoalsByUser, createSavingsGoal, updateSavingsGoal, deleteSavingsGoal } from "../services/savingsgoalApi";
+import {
+  getSavingsGoalsByUser,
+  createSavingsGoal,
+  updateSavingsGoal,
+  deleteSavingsGoal,
+} from "../services/savingsgoalApi";
 import { extractUserDetails } from "../utils/jwtUtil";
 import SavingsGoalModal from "../components/SavingsGoalModal";
 import SavingsGoalList from "../components/SavingsGoal";
@@ -10,26 +15,23 @@ const SavingsGoalPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingGoal, setEditingGoal] = useState<SavingsGoal | null>(null);
 
-  useEffect(() => {
-    const fetchSavingsGoals = async () => {
-      const userDetails = extractUserDetails();
-      const userId = userDetails?.userId;
-
-      if (!userId) {
-        console.error("User is not authenticated");
-        return;
-      }
-
-      try {
-        const goals = await getSavingsGoalsByUser(userId);
-        setSavingsGoals(goals);
-      } catch (error) {
-        console.error("Error fetching savings goals:", error);
-      }
-    };
-
-    fetchSavingsGoals();
-  }, []);
+  const fetchSavingsGoals = async () => {
+    const userDetails = extractUserDetails();
+    const userId = userDetails?.userId;
+  
+    if (!userId) {
+      console.error("User is not authenticated");
+      return;
+    }
+  
+    try {
+      const goals = await getSavingsGoalsByUser(userId);
+      setSavingsGoals(Array.isArray(goals) ? goals : []);
+    } catch (error) {
+      console.error("Error fetching savings goals:", error);
+      setSavingsGoals([]);
+    }
+  };
 
   const handleAddGoal = async (goalData: SavingsGoal) => {
     try {
@@ -43,7 +45,10 @@ const SavingsGoalPage = () => {
 
   const handleUpdateGoal = async (updatedGoal: SavingsGoal) => {
     try {
-      const updatedGoalData = await updateSavingsGoal(updatedGoal.id, updatedGoal);
+      const updatedGoalData = await updateSavingsGoal(
+        updatedGoal.id,
+        updatedGoal
+      );
       setSavingsGoals((prevGoals) =>
         prevGoals.map((goal) =>
           goal.id === updatedGoalData.id ? updatedGoalData : goal
@@ -59,7 +64,9 @@ const SavingsGoalPage = () => {
   const handleDeleteGoal = async (id: string) => {
     try {
       await deleteSavingsGoal(id);
-      setSavingsGoals((prevGoals) => prevGoals.filter((goal) => goal.id !== id));
+      setSavingsGoals((prevGoals) =>
+        prevGoals.filter((goal) => goal.id !== id)
+      );
     } catch (error) {
       console.error("Error deleting savings goal:", error);
     }
@@ -75,9 +82,15 @@ const SavingsGoalPage = () => {
     setModalOpen(true);
   };
 
+  useEffect(() => {
+    fetchSavingsGoals();
+  }, []);
+
   return (
     <div className="bg-gray-900 text-white p-8">
-      <h1 className="text-4xl font-bold text-purple-400 mb-6">Your Savings Goals</h1>
+      <h1 className="text-4xl font-bold text-purple-400 mb-6">
+        Your Savings Goals
+      </h1>
       <button
         onClick={openModalForAdd}
         className="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600"
@@ -88,7 +101,16 @@ const SavingsGoalPage = () => {
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         onSubmit={editingGoal ? handleUpdateGoal : handleAddGoal}
-        initialData={editingGoal || { id: '', name: '', targetAmount: 0, targetDate: '', currentAmount: 0 }}
+        initialData={
+          editingGoal || {
+            id: "",
+            name: "",
+            targetAmount: 0,
+            targetDate: "",
+            currentAmount: 0,
+            userId: "",
+          }
+        }
         isEditing={editingGoal !== null}
       />
       <SavingsGoalList

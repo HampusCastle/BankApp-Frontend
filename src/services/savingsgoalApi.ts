@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import axiosInstance from '../utils/axiosInstance';
+import { SavingsGoal } from "../types/SavingsGoal";
+import axiosInstance from "../utils/axiosInstance";
 
 export interface CreateSavingsGoalRequest {
   name: string;
@@ -13,8 +13,8 @@ export const createSavingsGoal = async (data: CreateSavingsGoalRequest) => {
 };
 
 export const getSavingsGoalsByUser = async (userId: string) => {
-  const response = await axiosInstance.get(`/savings-goals/user/${userId}/savings-goals`);
-  return response.data;
+  const response = await axiosInstance.get(`/savings-goals/user/${userId}`);
+  return response.data || [];
 };
 
 export const getSavingsGoalById = async (id: string) => {
@@ -22,7 +22,7 @@ export const getSavingsGoalById = async (id: string) => {
   return response.data;
 };
 
-export const updateSavingsGoal = async (id: string, data: any) => {
+export const updateSavingsGoal = async (id: string, data: Partial<SavingsGoal>) => {
   const response = await axiosInstance.patch(`/savings-goals/${id}`, data);
   return response.data;
 };

@@ -11,11 +11,8 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = getJwtToken();
-    console.log("Token before attaching to request:", token);
-
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
-      console.log("Authorization header set:", config.headers['Authorization']);
     } else {
       console.warn("No token found to set in Authorization header.");
     }

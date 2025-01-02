@@ -24,7 +24,6 @@ const LoginPage = () => {
 
     try {
       const { token } = await loginUser(formData);
-      console.log("Token received from login:", token);
       localStorage.setItem('jwtToken', token);
       navigate('/dashboard');
     } catch (err: any) {

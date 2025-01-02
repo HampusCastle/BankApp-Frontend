@@ -11,6 +11,7 @@ import SubscriptionPage from './pages/SubscriptionPage';
 import ScheduledPaymentPage from './pages/ScheduledPaymentPage';
 import Layout from './components/Layout';
 import NotificationPage from './pages/NotificationPage';
+import RecurringPaymentPage from './pages/RecurringPaymentPage';
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
         <Route path="/accounts" element={<PrivateRoute element={<AccountPage />} />} />
+        <Route path="/recurring-payments" element={<PrivateRoute element={<RecurringPaymentPage />} />} />
         <Route path="/subscriptions" element={<PrivateRoute element={<SubscriptionPage />} />} />
         <Route path="/savings-goals" element={<PrivateRoute element={<SavingsGoalPage />} />} />
         <Route path="/scheduled-payments" element={<PrivateRoute element={<ScheduledPaymentPage />} />} />

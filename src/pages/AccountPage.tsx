@@ -5,6 +5,7 @@ import AccountList from "../components/AccountList";
 import CreateAccountForm from "../components/CreateAccountForm";
 import AccountDetailsModal from "../components/AccountDetailsModal";
 import { AccountDetailsResponse } from "../services/accountApi";
+import { extractUserDetails } from "../utils/jwtUtil";
 
 const AccountPage = () => {
   const [accounts, setAccounts] = useState<AccountDetailsResponse[]>([]);
@@ -14,14 +15,19 @@ const AccountPage = () => {
 
   const fetchAccounts = async () => {
     try {
-      const data = await getAllAccounts();
-      if (Array.isArray(data)) {
-        setAccounts(data);
-      } else {
-        setError("Expected an array of accounts.");
+      const userDetails = extractUserDetails();
+      const userId = userDetails?.userId;
+
+      if (!userId) {
+        setError("User is not authenticated");
+        return;
       }
-    } catch {
-      setError("Failed to fetch accounts.");
+
+      const accountsData = await getAllAccounts();
+      setAccounts(accountsData);
+    } catch (err) {
+      console.error("Error fetching accounts:", err);
+      setError("Failed to fetch accounts");
     }
   };
 
@@ -50,6 +56,7 @@ const AccountPage = () => {
               isOpen
               onClose={closeAccountDetails}
               accountId={selectedAccountId}
+              onTransactionSuccess={fetchAccounts}
             />
           )}
         </div>

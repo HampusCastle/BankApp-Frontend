@@ -3,7 +3,6 @@ import {jwtDecode} from 'jwt-decode';
 
 export const getJwtToken = (): string | null => {
   const token = localStorage.getItem("jwtToken");
-  console.log("Retrieved token from localStorage:", token);
   return token;
 };
 
@@ -15,7 +14,6 @@ export const isAuthenticated = (): boolean => {
     const decoded: any = jwtDecode(token);
     const currentTime = Date.now() / 1000;
 
-    console.log("Decoded token:", decoded, "Current time:", currentTime);
     return decoded.exp > currentTime;
   } catch (error) {
     console.error("Invalid token:", error);
@@ -40,11 +38,9 @@ export const extractUserDetails = (): { userId: string; roles: string[] } | null
 };
 
 export const setJwtToken = (token: string): void => {
-  console.log("Setting token in localStorage:", token);
   localStorage.setItem("jwtToken", token);
 };
 
 export const clearJwtToken = (): void => {
-  console.log("Clearing token from localStorage");
   localStorage.removeItem("jwtToken");
 };
